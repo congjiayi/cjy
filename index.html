@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CJY导航 | 绝佳向导</title>
+    <style>
+        :root {
+            --primary: #007AFF;
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --text: #1C1C1E;
+            --secondary-text: #8E8E93;
+            --border: #C6C6C8;
+        }
+
+        .dark-theme {
+            --primary: #0A84FF;
+            --bg-color: #000000;
+            --card-bg: #1C1C1E;
+            --text: #FFFFFF;
+            --secondary-text: #8E8E93;
+            --border: #38383A;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .name {
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+            margin: 0 0 8px 0;
+            color: var(--primary);
+        }
+
+        .bio {
+            font-size: 15px;
+            color: var(--secondary-text);
+            text-align: center;
+            margin: 0 0 15px 0;
+            line-height: 1.4;
+        }
+
+        .link-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .link-card:hover {
+            transform: translateY(-2px);
+            background: rgba(0,122,255,0.1);
+        }
+
+        .link-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            color: white;
+            font-size: 20px;
+        }
+
+        .link-content {
+            flex: 1;
+        }
+
+        .link-title {
+            font-size: 17px;
+            font-weight: 500;
+            margin: 0 0 4px 0;
+        }
+
+        .link-desc {
+            font-size: 13px;
+            color: var(--secondary-text);
+            margin: 0;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+
+        /* 工具边栏 */
+        .tools-sidebar {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            z-index: 100;
+        }
+
+        .tools-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+
+        .tools-menu {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 12px;
+            width: 200px;
+            position: absolute;
+            right: 0;
+            top: 60px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+            border: 1px solid var(--border);
+        }
+
+        .tools-menu.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tool-item {
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+
+        .tool-item:hover {
+            background: rgba(0,122,255,0.1);
+        }
+
+        .tool-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+        }
+
+        /* 通用模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 14px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid var(--border);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .modal-content {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg-color);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* 日历样式 */
+        .calendar {
+            width: 100%;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calendar-nav {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .calendar-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-cell {
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+
+        .calendar-cell.header {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .calendar-cell.day {
+            cursor: pointer;
+        }
+
+        .calendar-cell.day:hover {
+            background: rgba(0,122,255,0.1);
+        }
+
+        .calendar-cell.today {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-cell.other-month {
+            color: var(--secondary-text);
+        }
+
+        /* 计时器样式 */
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .timer-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-color);
+            color: var(--text);
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        /* 备忘录样式 */
+        .memo-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .memo-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .memo-text {
+            flex: 1;
+            margin-right: 10px;
+            word-break: break-word;
+        }
+
+        .memo-delete {
+            background: none;
+            border: none;
+            color: #FF3B30;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .memo-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-color);
+            color: var(--text);
+            margin-bottom: 15px;
+            resize: none;
+            min-height: 60px;
+        }
+
+        /* 天气样式 */
+        .weather-display {
+            padding: 20px 0;
+        }
+
+        .weather-icon {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+
+        .weather-temp {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .weather-desc {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--secondary-text);
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .weather-detail {
+            background: var(--bg-color);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .weather-detail-label {
+            font-size: 12px;
+            color: var(--secondary-text);
+            margin-bottom: 5px;
+        }
+
+        .weather-detail-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .location-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-color);
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        /* 密码本样式 */
+        .vault-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .vault-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vault-info {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .vault-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .vault-value {
+            font-size: 12px;
+            color: var(--secondary-text);
+            font-family: monospace;
+        }
+
+        .vault-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .vault-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .vault-action.view {
+            color: var(--primary);
+        }
+
+        .vault-action.delete {
+            color: #FF3B30;
+        }
+
+        .vault-form {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .vault-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-color);
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        /* 游戏模态框 */
+        .game-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        
+        .game-box {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .game-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .game-stats {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .stat-box {
+            background: var(--bg-color);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            aspect-ratio: 1;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        
+        .card .front, .card .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card .front {
+            background: var(--card-bg);
+            transform: rotateY(180deg);
+        }
+        
+        .card .back {
+            background: var(--primary);
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card.matched .front {
+            background: #34C759;
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .game-btn {
+            padding: 12px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .game-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .game-btn.secondary {
+            background: var(--bg-color);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: var(--bg-color);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        /* 游戏结束弹窗 */
+        .game-complete {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: 20px;
+            color: white;
+            z-index: 10;
+        }
+        
+        .game-complete.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .celebration {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+        }
+        
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+    </style>
+ </head>
+<body>
+    <div class="container">
+        <!-- 工具边栏 -->
+        <div class="tools-sidebar">
+            <div class="tools-toggle" id="toolsToggle">🧰</div>
+            <div class="tools-menu" id="toolsMenu">
+                <div class="tool-item" onclick="showTool('calendar')">
+                    <div class="tool-icon">📅</div>
+                    <span>日历</span>
+                </div>
+                <div class="tool-item" onclick="showTool('timer')">
+                    <div class="tool-icon">⏱</div>
+                    <span>计时器</span>
+                </div>
+                <div class="tool-item" onclick="showTool('memo')">
+                    <div class="tool-icon">📝</div>
+                    <span>备忘录</span>
+                </div>
+                <div class="tool-item" onclick="showTool('weather')">
+                    <div class="tool-icon">🌤</div>
+                    <span>天气</span>
+                </div>
+                <div class="tool-item" onclick="showTool('vault')">
+                    <div class="tool-icon">🔒</div>
+                    <span>密码本</span>
+                </div>
+                <div class="tool-item" onclick="showMemoryGame()">
+                    <div class="tool-icon">🎮</div>
+                    <span>记忆游戏</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 日历模态框 -->
+        <div class="modal" id="calendarModal">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3 class="modal-title">📅 日历</h3>
+                    <button class="close-btn" onclick="hideTool('calendarModal')">×</button>
+                </div>
+                <div class="modal-content">
+                    <div class="calendar" id="calendar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 计时器模态框 -->
+        <div class="modal" id="timerModal">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3 class="modal-title">⏱ 计时器</h3>
+                    <button class="close-btn" onclick="hideTool('timerModal')">×</button>
+                </div>
+                <div class="modal-content">
+                    <input type="number" class="timer-input" id="timerInput" placeholder="输入分钟数..." min="1" value="10">
+                    <div class="timer-display" id="timerDisplay">10:00</div>
+                    <div class="timer-controls">
+                        <button class="btn btn-primary" id="timerStart" onclick="startTimer()">开始</button>
+                        <button class="btn btn-secondary" id="timerPause" onclick="pauseTimer()" disabled>暂停</button>
+                        <button class="btn btn-secondary" id="timerReset" onclick="resetTimer()">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 备忘录模态框 -->
+        <div class="modal" id="memoModal">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3 class="modal-title">📝 备忘录</h3>
+                    <button class="close-btn" onclick="hideTool('memoModal')">×</button>
+                </div>
+                <div class="modal-content">
+                    <div class="memo-list" id="memoList"></div>
+                    <textarea class="memo-input" id="memoInput" placeholder="输入新的备忘录..."></textarea>
+                    <button class="btn btn-primary" onclick="addMemo()">添加</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 天气模态框 -->
+        <div class="modal" id="weatherModal">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3 class="modal-title">🌤 天气</h3>
+                    <button class="close-btn" onclick="hideTool('weatherModal')">×</button>
+                </div>
+                <div class="modal-content">
+                    <input type="text" class="location-input" id="locationInput" placeholder="输入城市名称..." value="北京">
+                    <button class="btn btn-primary" onclick="getWeather()">查询</button>
+                    <div class="weather-display" id="weatherDisplay">
+                        <div class="weather-icon">🌤</div>
+                        <div class="weather-temp">--°C</div>
+                        <div class="weather-desc">请输入城市查询天气</div>
+                        <div class="weather-details">
+                            <div class="weather-detail">
+                                <div class="weather-detail-label">湿度</div>
+                                <div class="weather-detail-value">--%</div>
+                            </div>
+                            <div class="weather-detail">
+                                <div class="weather-detail-label">风速</div>
+                                <div class="weather-detail-value">-- m/s</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 密码本模态框 -->
+        <div class="modal" id="vaultModal">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3 class="modal-title">🔒 密码本</h3>
+                    <button class="close-btn" onclick="hideTool('vaultModal')">×</button>
+                </div>
+                <div class="modal-content">
+                    <div class="vault-list" id="vaultList"></div>
+                    <div class="vault-form">
+                        <input type="text" class="vault-input" id="vaultNameInput" placeholder="账户名称">
+                        <input type="text" class="vault-input" id="vaultValueInput" placeholder="用户名/密码">
+                        <button class="btn btn-primary" onclick="addVaultItem()">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏模态框 -->
+        <div class="game-modal" id="gameModal">
+            <div class="game-box">
+                <div class="game-header">
+                    <h2 class="game-title">记忆卡片匹配</h2>
+                    <div class="game-stats">
+                        <div class="stat-box" id="moves">步数: 0</div>
+                        <div class="stat-box" id="timer">时间: 0s</div>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="gameProgress" style="width: 0%"></div>
+                </div>
+                
+                <div class="game-grid" id="gameGrid">
+                    <!-- 卡片将通过JS动态生成 -->
+                </div>
+                
+                <div class="game-controls">
+                    <button class="game-btn" onclick="resetGame()">重新开始</button>
+                    <button class="game-btn secondary" onclick="hideGame()">关闭</button>
+                </div>
+                
+                <div class="game-complete" id="gameComplete">
+                    <div class="celebration">🎉</div>
+                    <h2>恭喜你完成了游戏！</h2>
+                    <p>用时: <span id="finalTime">0</span> 秒</p>
+                    <p>步数: <span id="finalMoves">0</span> 步</p>
+                    <button class="game-btn" onclick="resetGame()" style="margin-top: 20px">再玩一次</button>
+                </div>
+            </div>
+        </div>
+          
+        <!-- 新增专栏 -->
+        <div class="column-card">
+            <h2 class="column-title">关于我们</h2>
+            <div class="column-content">
+                CJY导航是一个致力于为您提供便捷信息的导航网站。我们精心挑选了一系列实用的工具和服务，帮助您更好地管理时间和生活。<br><br>
+                我们的愿景是成为您的得力助手，让每一天更加高效有序。如果您有任何建议或反馈，请随时联系我们。
+            </div>
+        </div>
+        
+        <!-- 个人信息 -->
+        <div class="profile-card">
+            <img src="CJY.png" alt="头像" class="avatar">
+            <h1 class="name">CJY导航</h1>
+            <p class="bio">❗请在上课时警惕打开此网站 | ❗若被发现后果自负哦<br>
+            ⚠勿传 | ⚠自用</p>
+        </div>
+
+        <!-- 我的作品 -->
+        <div style="font-size:13px;color:var(--secondary-text);margin:18px 0 10px 4px;">—— 我的作品 ——</div>
+
+        <a href="https://congjiayi.github.io/umbra/" class="link-card" target="_blank">
+            <div class="link-icon">🚪</div>
+            <div class="link-content">
+                <h3 class="link-title">UMBRA · 门</h3>
+                <p class="link-desc">ARG 解谜 · 回廊 → 门 → 终端</p>
+            </div>
+        </a>
+
+        <a href="https://congjiayi.github.io/cctv/" class="link-card" target="_blank">
+            <div class="link-icon">📹</div>
+            <div class="link-content">
+                <h3 class="link-title">闭路监控 · 夜班</h3>
+                <p class="link-desc">CCTV 恐怖模拟 · 8 路监控</p>
+            </div>
+        </a>
+
+        <!-- 导航链接 -->
+        <a href="https://www.enabcd.cn/" class="link-card" target="_blank">
+            <div class="link-icon">🌐</div>
+            <div class="link-content">
+                <h3 class="link-title">en.||同类导航页</h3>
+                <p class="link-desc">打0分！！因为它比我强！！</p>
+            </div>
+        </a>
+
+             <a href="https://yandex.com/" class="link-card" target="_blank">
+            <div class="link-icon">🌐</div>
+            <div class="link-content">
+                <h3 class="link-title">en.||外网搜索引擎</h3>
+                <p class="link-desc">✋什么都搜得到(前提是关键词你打对了)注意！什么都搜得到哦，谁也不知道你脑子是什么颜色的，黄色?😏</p>
+            </div>
+        </a>
+
+        <a href="https://www.crazygames.com/" class="link-card" target="_blank">
+            <div class="link-icon">🎮</div>
+            <div class="link-content">
+                <h3 class="link-title">crazy games||游戏世界</h3>
+                <p class="link-desc">发现精彩休闲游戏合集</p>
+            </div>
+        </a>
+
+        <a href="https://mikagogo.com/" class="link-card" target="_blank">
+            <div class="link-icon">🖼</div>
+            <div class="link-content">
+                <h3 class="link-title">米卡||同人绘画</h3>
+                <p class="link-desc">cos||同人||福利||插图</p>
+            </div>
+        </a>
+    
+        <a href="https://skr.skr3.cc:666/" class="link-card" target="_blank">
+            <div class="link-icon">😍</div>
+            <div class="link-content">
+                <h3 class="link-title">樱漫||动漫窝点</h3>
+                <p class="link-desc">什么动漫都有哦~</p>
+            </div>
+        </a>
+    
+        <a href="https://kbhgames.com/" class="link-card" target="_blank">
+            <div class="link-icon">🎮</div>
+            <div class="link-content">
+                <h3 class="link-title">KBH||小游戏大全</h3>
+                <p class="link-desc">与crazy games相比逊色许多</p>
+            </div>
+        </a>
+    
+        <a href="https://itch.io/" class="link-card" target="_blank">
+            <div class="link-icon">🕹</div>
+            <div class="link-content">
+                <h3 class="link-title">itch.io||免费游戏之王</h3>
+                <p class="link-desc">神中神(近期由于反gal组织导致此网站疑似替换⛔暂时不要打开为好</p>
+            </div>
+        </a>
+     
+        <a href="https://tikolu.net/emojimix/" class="link-card" target="_blank">
+            <div class="link-icon">🐢</div>
+            <div class="link-content">
+                <h3 class="link-title">tikolu||表情混合机</h3>
+                <p class="link-desc">小丑捏鼻头？这里都能混合！</p>
+            </div>
+        </a>
+    
+        <a href="https://go.itab.link/" class="link-card" target="_blank">
+            <div class="link-icon">🌍</div>
+            <div class="link-content">
+                <h3 class="link-title">itu新标签页||The world</h3>
+                <p class="link-desc">万能集权！</p>
+            </div>
+        </a>
+    
+        <a href="https://liferestart.syaro.io/" class="link-card" target="_blank">
+            <div class="link-icon">👶</div>
+            <div class="link-content">
+                <h3 class="link-title">life restart||人生重开</h3>
+                <p class="link-desc">这个傻逼世界一点也不想待了</p>
+            </div>
+        </a>
+    </div>
+
+    <div class="theme-toggle" id="themeToggle">🌙</div>
+
+    <script>
+        // 工具边栏交互
+        const toolsToggle = document.getElementById('toolsToggle');
+        const toolsMenu = document.getElementById('toolsMenu');
+        
+        toolsToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toolsMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if(!e.target.closest('.tools-sidebar')) {
+                toolsMenu.classList.remove('show');
+            }
+        });
+
+        // 工具功能
+        function showTool(toolName) {
+            // 先关闭所有工具
+            hideAllTools();
+            
+            // 显示选中的工具
+            const toolModal = document.getElementById(toolName + 'Modal');
+            if (toolModal) {
+                toolModal.style.display = 'flex';
+                
+                // 如果是特定工具，初始化它
+                if (toolName === 'calendar') {
+                    initCalendar();
+                } else if (toolName === 'memo') {
+                    loadMemos();
+                } else if (toolName === 'vault') {
+                    loadVaultItems();
+                } else if (toolName === 'weather') {
+                    // 默认加载北京天气
+                    getWeather();
+                }
+            }
+            
+            // 点击后关闭菜单
+            toolsMenu.classList.remove('show');
+        }
+        
+        function hideTool(toolId) {
+            const toolModal = document.getElementById(toolId);
+            if (toolModal) {
+                toolModal.style.display = 'none';
+            }
+        }
+        
+        function hideAllTools() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+        
+        // 点击遮罩关闭工具
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if(e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // 日历功能
+        function initCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            
+            // 生成日历HTML
+            const monthNames = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+            const dayNames = ['日', '一', '二', '三', '四', '五', '六'];
+            
+            // 获取月份的第一天和最后一天
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            let calendarHTML = `
+                <div class="calendar-header">
+                    <button class="calendar-nav" onclick="changeMonth(-1)">←</button>
+                    <div class="calendar-title">${year}年 ${monthNames[month]}</div>
+                    <button class="calendar-nav" onclick="changeMonth(1)">→</button>
+                </div>
+                <div class="calendar-grid">
+            `;
+            
+            // 添加星期标题
+            for (let i = 0; i < 7; i++) {
+                calendarHTML += `<div class="calendar-cell header">${dayNames[i]}</div>`;
+            }
+            
+            // 添加空白单元格（月初）
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                calendarHTML += `<div class="calendar-cell other-month"></div>`;
+            }
+            
+            // 添加日期单元格
+            for (let i = 1; i <= lastDay.getDate(); i++) {
+                const isToday = i === now.getDate() && month === now.getMonth() && year === now.getFullYear();
+                calendarHTML += `<div class="calendar-cell day ${isToday ? 'today' : ''}">${i}</div>`;
+            }
+            
+            calendarHTML += `</div>`;
+            calendarEl.innerHTML = calendarHTML;
+        }
+        
+        function changeMonth(direction) {
+            // 这里可以扩展为支持切换月份
+            alert('月份切换功能已预留，待进一步开发');
+        }
+        
+        // 计时器功能
+        let timerInterval = null;
+        let timerSeconds = 600; // 默认10分钟
+        let timerRunning = false;
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function startTimer() {
+            if (timerRunning) return;
+            
+            const inputMinutes = parseInt(document.getElementById('timerInput').value);
+            if (!isNaN(inputMinutes) && inputMinutes > 0) {
+                timerSeconds = inputMinutes * 60;
+            }
+            
+            timerRunning = true;
+            document.getElementById('timerStart').disabled = true;
+            document.getElementById('timerPause').disabled = false;
+            
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert('计时结束！');
+                    resetTimer();
+                }
+            }, 1000);
+        }
+        
+        function pauseTimer() {
+            if (!timerRunning) return;
+            
+            clearInterval(timerInterval);
+            timerRunning = false;
+            document.getElementById('timerStart').disabled = false;
+            document.getElementById('timerPause').disabled = true;
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            const inputMinutes = parseInt(document.getElementById('timerInput').value);
+            timerSeconds = !isNaN(inputMinutes) && inputMinutes > 0 ? inputMinutes * 60 : 600;
+            
+            document.getElementById('timerStart').disabled = false;
+            document.getElementById('timerPause').disabled = true;
+            updateTimerDisplay();
+        }
+        
+        // 初始化计时器显示
+        document.getElementById('timerInput').addEventListener('input', function() {
+            const minutes = parseInt(this.value);
+            if (!isNaN(minutes) && minutes > 0) {
+                timerSeconds = minutes * 60;
+                updateTimerDisplay();
+            }
+        });
+        
+        // 备忘录功能
+        function loadMemos() {
+            const memos = JSON.parse(localStorage.getItem('memos') || '[]');
+            const memoList = document.getElementById('memoList');
+            
+            memoList.innerHTML = '';
+            
+            if (memos.length === 0) {
+                memoList.innerHTML = '<p style="text-align: center; color: var(--secondary-text);">暂无备忘录</p>';
+                return;
+            }
+            
+            memos.forEach((memo, index) => {
+                const memoItem = document.createElement('div');
+                memoItem.className = 'memo-item';
+                memoItem.innerHTML = `
+                    <div class="memo-text">${memo}</div>
+                    <button class="memo-delete" onclick="deleteMemo(${index})">×</button>
+                `;
+                memoList.appendChild(memoItem);
+            });
+        }
+        
+        function addMemo() {
+            const memoInput = document.getElementById('memoInput');
+            const memoText = memoInput.value.trim();
+            
+            if (memoText === '') return;
+            
+            const memos = JSON.parse(localStorage.getItem('memos') || '[]');
+            memos.push(memoText);
+            localStorage.setItem('memos', JSON.stringify(memos));
+            
+            memoInput.value = '';
+            loadMemos();
+        }
+        
+        function deleteMemo(index) {
+            const memos = JSON.parse(localStorage.getItem('memos') || '[]');
+            memos.splice(index, 1);
+            localStorage.setItem('memos', JSON.stringify(memos));
+            loadMemos();
+        }
+        
+        // 天气功能 (使用模拟数据，实际应用中可接入API)
+        function getWeather() {
+            const location = document.getElementById('locationInput').value.trim() || '北京';
+            
+            // 模拟天气数据
+            const weatherData = {
+                temp: Math.floor(Math.random() * 30) + 5,
+                desc: ['晴', '多云', '小雨', '阴'][Math.floor(Math.random() * 4)],
+                humidity: Math.floor(Math.random() * 50) + 30,
+                wind: (Math.random() * 10).toFixed(1)
+            };
+            
+            // 根据描述选择图标
+            let icon = '🌤';
+            if (weatherData.desc.includes('雨')) icon = '🌧';
+            else if (weatherData.desc.includes('云')) icon = '☁';
+            else if (weatherData.desc.includes('晴')) icon = '☀';
+            
+            const weatherDisplay = document.getElementById('weatherDisplay');
+            weatherDisplay.innerHTML = `
+                <div class="weather-icon">${icon}</div>
+                <div class="weather-temp">${weatherData.temp}°C</div>
+                <div class="weather-desc">${location} · ${weatherData.desc}</div>
+                <div class="weather-details">
+                    <div class="weather-detail">
+                        <div class="weather-detail-label">湿度</div>
+                        <div class="weather-detail-value">${weatherData.humidity}%</div>
+                    </div>
+                    <div class="weather-detail">
+                        <div class="weather-detail-label">风速</div>
+                        <div class="weather-detail-value">${weatherData.wind} m/s</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 密码本功能
+        function loadVaultItems() {
+            const vaultItems = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+            const vaultList = document.getElementById('vaultList');
+            
+            vaultList.innerHTML = '';
+            
+            if (vaultItems.length === 0) {
+                vaultList.innerHTML = '<p style="text-align: center; color: var(--secondary-text);">暂无保存的密码</p>';
+                return;
+            }
+            
+            vaultItems.forEach((item, index) => {
+                const vaultItem = document.createElement('div');
+                vaultItem.className = 'vault-item';
+                vaultItem.innerHTML = `
+                    <div class="vault-info">
+                        <div class="vault-name">${item.name}</div>
+                        <div class="vault-value">${item.value.replace(/./g, '•')}</div>
+                    </div>
+                    <div class="vault-actions">
+                        <button class="vault-action view" onclick="viewVaultItem(${index})">👁</button>
+                        <button class="vault-action delete" onclick="deleteVaultItem(${index})">×</button>
+                    </div>
+                `;
+                vaultList.appendChild(vaultItem);
+            });
+        }
+        
+        function addVaultItem() {
+            const nameInput = document.getElementById('vaultNameInput');
+            const valueInput = document.getElementById('vaultValueInput');
+            
+            const name = nameInput.value.trim();
+            const value = valueInput.value.trim();
+            
+            if (name === '' || value === '') return;
+            
+            const vaultItems = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+            vaultItems.push({ name, value });
+            localStorage.setItem('vaultItems', JSON.stringify(vaultItems));
+            
+            nameInput.value = '';
+            valueInput.value = '';
+            loadVaultItems();
+        }
+        
+        function viewVaultItem(index) {
+            const vaultItems = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+            if (vaultItems[index]) {
+                alert(`账户: ${vaultItems[index].name}\n密码: ${vaultItems[index].value}`);
+            }
+        }
+        
+        function deleteVaultItem(index) {
+            const vaultItems = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+            vaultItems.splice(index, 1);
+            localStorage.setItem('vaultItems', JSON.stringify(vaultItems));
+            loadVaultItems();
+        }
+        
+        // 暗黑模式切换
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            themeToggle.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+        });
+
+        // 记忆游戏功能
+        const gameModal = document.getElementById('gameModal');
+        const gameGrid = document.getElementById('gameGrid');
+        const movesElement = document.getElementById('moves');
+        const timerElement = document.getElementById('timer');
+        const progressElement = document.getElementById('gameProgress');
+        const gameComplete = document.getElementById('gameComplete');
+        const finalTimeElement = document.getElementById('finalTime');
+        const finalMovesElement = document.getElementById('finalMoves');
+        
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let gameTimer = null;
+        let seconds = 0;
+        let gameActive = false;
+        
+        // 显示游戏模态框
+        function showMemoryGame() {
+            gameModal.style.display = 'flex';
+            toolsMenu.classList.remove('show');
+            resetGame();
+        }
+        
+        // 隐藏游戏模态框
+        function hideGame() {
+            gameModal.style.display = 'none';
+            clearInterval(gameTimer);
+            gameActive = false;
+        }
+        
+        // 点击遮罩关闭游戏
+        gameModal.addEventListener('click', (e) => {
+            if(e.target === gameModal) {
+                hideGame();
+            }
+        });
+        
+        // 初始化游戏
+        function initGame() {
+            // 创建卡片对 (8对 = 16张卡片)
+            const symbols = ['🍎', '🍊', '🍇', '🍓', '🍉', '🍒', '🍑', '🍍'];
+            cards = [...symbols, ...symbols];
+            
+            // 洗牌算法
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+            
+            // 生成卡片HTML
+            gameGrid.innerHTML = '';
+            cards.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="front">${symbol}</div>
+                    <div class="back">?</div>
+                `;
+                card.addEventListener('click', () => flipCard(card, index));
+                gameGrid.appendChild(card);
+            });
+            
+            // 重置游戏状态
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            seconds = 0;
+            movesElement.textContent = `步数: ${moves}`;
+            timerElement.textContent = `时间: ${seconds}s`;
+            progressElement.style.width = '0%';
+            gameComplete.classList.remove('show');
+            
+            // 开始计时
+            clearInterval(gameTimer);
+            gameTimer = setInterval(() => {
+                seconds++;
+                timerElement.textContent = `时间: ${seconds}s`;
+            }, 1000);
+            
+            gameActive = true;
+        }
+        
+        // 翻转卡片
+        function flipCard(card, index) {
+            if (!gameActive || flippedCards.length >= 2 || card.classList.contains('flipped') || card.classList.contains('matched')) {
+                return;
+            }
+            
+            card.classList.add('flipped');
+            flippedCards.push({card, index});
+            
+            if (flippedCards.length === 2) {
+                moves++;
+                movesElement.textContent = `步数: ${moves}`;
+                
+                // 检查是否匹配
+                const [card1, card2] = flippedCards;
+                if (cards[card1.index] === cards[card2.index]) {
+                    // 匹配成功
+                    card1.card.classList.add('matched');
+                    card2.card.classList.add('matched');
+                    matchedPairs++;
+                    
+                    // 更新进度条
+                    progressElement.style.width = `${(matchedPairs / 8) * 100}%`;
+                    
+                    flippedCards = [];
+                    
+                    // 检查游戏是否完成
+                    if (matchedPairs === 8) {
+                        completeGame();
+                    }
+                } else {
+                    // 不匹配，翻转回去
+                    setTimeout(() => {
+                        card1.card.classList.remove('flipped');
+                        card2.card.classList.remove('flipped');
+                        flippedCards = [];
+                    }, 1000);
+                }
+            }
+        }
+        
+        // 游戏完成
+        function completeGame() {
+            clearInterval(gameTimer);
+            gameActive = false;
+            
+            finalTimeElement.textContent = seconds;
+            finalMovesElement.textContent = moves;
+            
+            setTimeout(() => {
+                gameComplete.classList.add('show');
+            }, 500);
+        }
+        
+        // 重置游戏
+        function resetGame() {
+            clearInterval(gameTimer);
+            initGame();
+        }
+        
+        // 初始化页面时预加载游戏
+        window.addEventListener('load', () => {
+            // 预初始化游戏，但不显示
+            initGame();
+            gameModal.style.display = 'none';
+            
+            // 初始化工具
+            updateTimerDisplay();
+        });
+    </script>
+</body>
+</html>
